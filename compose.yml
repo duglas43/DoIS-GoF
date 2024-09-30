@@ -1,0 +1,4 @@
+name: homework_malkov
+services:
+  app:
+    build: .
