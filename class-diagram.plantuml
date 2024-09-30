@@ -1,0 +1,138 @@
+@startuml
+title MachineERP Class Diagram
+class OrderController {
+    + createOrder(orderData: OrderData): void
+    + validateOrder(order: Order): void
+    + sendOrderForApproval(order: Order): void
+    + generateOrderReport(orderId: int): Report
+}
+
+class Order {
+    + id: int
+    + status: String
+    + machines: List<AbstractMachine>
+    + client: Client
+    + validate(): boolean
+    + approve(manager: Manager): boolean
+}
+
+class Client {
+    + id: int
+    + name: String
+    + contactInfo: String
+}
+
+class Manager {
+    + id: int
+    + name: String
+    + approveOrder(order: Order): boolean
+    + rejectOrder(order: Order): boolean
+}
+
+class OrderValidator {
+    + validateOrderData(orderData: OrderData): boolean
+}
+
+class OrderRepository {
+    + save(order: Order): void
+    + getOrderById(orderId: int): Order
+}
+
+class ReportGenerator {
+    + generateReport(order: Order): Report
+}
+
+class Report {
+    + content: String
+    + generatePDF(): void
+}
+
+
+interface AbstractMachine {
+    + operate(): string
+}
+
+interface AbstractParts {
+    + getDescription(): string
+}
+
+interface AbstractFactory {
+    + createMachine(): AbstractMachine
+    + createParts(): AbstractParts
+}
+
+class LatheMachineFactory implements AbstractFactory {
+    + createMachine(): AbstractMachine
+    + createParts(): AbstractParts
+}
+
+class MillingMachineFactory implements AbstractFactory {
+    + createMachine(): AbstractMachine
+    + createParts(): AbstractParts
+}
+
+class LatheMachine implements AbstractMachine {
+    + operate(): string
+}
+
+class LatheParts implements AbstractParts {
+    + getDescription(): string
+}
+
+class MillingMachine implements AbstractMachine {
+    + operate(): string
+}
+
+class MillingParts implements AbstractParts {
+    + getDescription(): string
+}
+
+class PriceContext {
+    + setStrategy(strategy: PricingStrategy): void
+    + calculatePrice(basePrice: double): double
+}
+
+interface PricingStrategy {
+    + calculatePrice(basePrice: double): double
+}
+
+class StandardPricingStrategy implements PricingStrategy {
+    + calculatePrice(basePrice: double): double
+}
+
+class DiscountPricingStrategy implements PricingStrategy {
+    + calculatePrice(basePrice: double): double
+}
+
+class DetailedReportDecorator {
+    + generate(report): String
+}
+
+OrderController --> Order : управляет
+OrderController --> OrderValidator : использует для проверки
+OrderController --> Manager : отправляет запрос
+OrderController --> ReportGenerator : создает отчеты
+
+Order --* Client : Содержит
+Order --* AbstractMachine : Содержит
+OrderRepository --> Order 
+Manager --> Order : проверяет и подтверждает
+
+ReportGenerator --> Report : генерирует
+
+LatheMachineFactory --> AbstractMachine : создаёт
+LatheMachineFactory --> AbstractParts : создаёт
+MillingMachineFactory --> AbstractMachine : создаёт
+MillingMachineFactory --> AbstractParts : создаёт
+
+
+PriceContext --> PricingStrategy
+PricingStrategy <|-- StandardPricingStrategy
+PricingStrategy <|-- DiscountPricingStrategy
+
+DetailedReportDecorator --> Report
+
+OrderRepository --> Database
+
+
+@enduml

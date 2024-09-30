@@ -24,6 +24,10 @@ npm install
 npm run start:dev
 ```
 
+## Диаграмма классов
+
+![Диаграмма классов](./attachments/Screenshot_8.png)
+
 ## Обоснование применения паттернов проектирования в MachineERP
 
 ### Singleton
